@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Conversation from './Automated/Conversation'
+import Conversation from '.components/automated/Conversation'
 export default {
   name: 'App',
   components: {

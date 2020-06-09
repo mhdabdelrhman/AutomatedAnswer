@@ -35,6 +35,7 @@
         props: {
             value: {
                 type: Chain,
+                default: () => new Chain(),
             }
         },
         data() {
