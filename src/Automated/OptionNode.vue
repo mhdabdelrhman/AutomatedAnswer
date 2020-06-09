@@ -1,0 +1,78 @@
+<template>
+    <div :class="['option-container',selected ?'option-active':'']">
+        <input type="text" v-model="text" @input="handelChange" @blur="handelFocus(false)" @focus="handelFocus(true)" placeholder="Reply option" :style="{'width':width}">
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'option-node',
+        props: {
+            value: {
+                type: String,
+                default: "",
+            },
+            selected: {
+                type: Boolean,
+                default: false,
+            }
+        },
+        data() {
+            return {
+                text: this.value,
+                focused: true,
+            }
+        },
+        computed: {
+            width() {
+                let txt = 'Reply option';
+                if (this.text && this.text.length > 0)
+                    txt = this.text;
+                return ((txt.length + 1) * 6.5) + 'px';
+            }
+        },
+        methods: {
+            handelChange() {
+                this.$emit('input', this.text);
+            },
+            handelFocus(isFocused) {
+                if (this.focused != isFocused) {
+                    this.focused = isFocused;
+                    this.$emit('focusToggled', this.focused);
+                }
+            }
+        },
+        watch: {
+            value: function(to, from) {
+                this.text = to;
+            }
+        }
+    }
+</script>
+<style>
+    .option-container {
+        display: inline-block;
+        margin: 5px;
+        padding: 5px 15px;
+        border-radius: 25px;
+        border: 1px solid #3A97F9;
+        background-color: white;
+    }
+    .option-active {
+        background-color: #3A97F9;
+    }
+    .option-container input {
+        min-width: 12px;
+        max-width: 200px;
+        height: 30px;
+        background-color: transparent;
+        border: 0px;
+        color: #3A97F9;
+    }
+    .option-container input::placeholder {
+        color: #82BEFD;
+    }
+    .option-active input {
+        color: white;
+    }
+</style>
