@@ -5,6 +5,7 @@ export class Chain {
 		this.id = generateId();
 		this.text = "";
 		this.replies = [];
+		this.dialogs = [];
 	}
 }
 
@@ -16,5 +17,15 @@ export class Reply {
 		this.selected = null;
 	}
 }
+
+export class Dialog {
+	constructor() {
+		this.id = generateId();
+		this.text = "";
+		this.type = "";
+	}
+}
+
 var tree = new Chain();
+
 export default tree;
