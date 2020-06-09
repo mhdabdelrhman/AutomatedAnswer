@@ -1,5 +1,5 @@
 # Automated Answer
-Building nasted tree for automated answers.
+Building nested tree for automated answers.
 
 
 ## Project setup
