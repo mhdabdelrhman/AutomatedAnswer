@@ -1,6 +1,6 @@
 <template>
     <div class="conversation-container">
-        <reply-node v-model="chain"></reply-node>
+        <chain-node v-model="chain"></chain-node>
         <div>
             <span @click="handelSave">Save</span>
         </div>
@@ -9,11 +9,11 @@
 
 <script>
     import tree from './models'
-    import ReplyNode from './ReplyNode'
+    import ChainNode from './ChainNode'
     export default {
         name: 'conversation',
         components: {
-            'reply-node': ReplyNode,
+            'chain-node': ChainNode,
         },
         data() {
             return {
