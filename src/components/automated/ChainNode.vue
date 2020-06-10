@@ -5,7 +5,13 @@
                 <message-node v-model="value.text" @focused="handelMessageFocused" />
             </div>
             <div class="replies-container">
-                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focused="(focused)=>handelOptionFocused(index,reply,focused)" />
+                <reply-node 
+                v-for="(reply,index) in this.value.replies" 
+                :key="index" 
+                :selected="reply.selected" 
+                v-model="reply.text" 
+                @focused="(focused)=>handelOptionFocused(index,reply,focused)" 
+                @delete="()=>handelOptionDelete(index,reply)" />
             </div>
             <div v-if="enableAddReply" class="add-reply">
                 <span @click="handelAddReply">+ ADD REPLY OPTION</span>
@@ -67,6 +73,9 @@
                     this.selectReply(reply);
                 }
             },
+            handelOptionDelete(index, reply) {
+                alert('delete reply: ' + reply.text);
+            },
             handelAddReply() {
                 let reply = new Reply();
                 this.value.replies.push(reply);
@@ -81,7 +90,7 @@
                         this.showNextReply = true;
                     }, 100);
                 }
-            },            
+            },
         },
     }
 </script>

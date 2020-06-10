@@ -1,6 +1,18 @@
 <template>
-    <div :class="['reply-container',selected ?'reply-active':'']">
-        <input type="text" v-model="text" @input="handelChange" @blur="handelFocus(false)" @focus="handelFocus(true)" :placeholder="placeHolder" :style="{'width':width}">
+    <div :class="['reply-container',selected||hover ?'reply-active':'']" @mouseover="hover = true" @mouseleave="hover = false">
+        <input type="text" 
+        v-model="text" 
+        @input="handelChange" 
+        @blur="handelFocus(false)" 
+        @focus="handelFocus(true)" 
+        :placeholder="placeHolder" 
+        :style="{'width':width}">
+
+        <transition name="fade">
+            <div v-show="hover">
+                <span @click="handelDelete">X</span>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -20,7 +32,8 @@
         data() {
             return {
                 text: this.value,
-                placeHolder: 'Reply option'
+                placeHolder: 'Reply option',
+                hover: false,
             }
         },
         computed: {
@@ -37,6 +50,9 @@
             },
             handelFocus(isFocused) {
                 this.$emit('focused', isFocused);
+            },
+            handelDelete() {
+                this.$emit('delete');
             }
         },
         watch: {
@@ -54,9 +70,7 @@
         border-radius: 25px;
         border: 1px solid #3A97F9;
         background-color: white;
-    }
-    .reply-active {
-        background-color: #3A97F9;
+        position: relative;
     }
     .reply-container input {
         min-width: 12px;
@@ -68,6 +82,29 @@
     }
     .reply-container input::placeholder {
         color: #82BEFD;
+    }
+    .reply-container div {
+        display: inline-block;
+        width: 21px;
+        height: 19px;
+        position: absolute;
+        top: -4px;
+        right: -8px;
+        background-color: white;
+        color: #3A97F9;
+        border-radius: 14px;
+        border: 1px solid #3A97F9;
+        cursor: pointer;
+        text-align: center;
+        padding-top: 2px;
+    }
+    .reply-container div:hover {
+        background-color: #3A97F9;
+        color: white;
+        border-color: white;
+    }
+    .reply-active {
+        background-color: #3A97F9;
     }
     .reply-active input {
         color: white;
