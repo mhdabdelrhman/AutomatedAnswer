@@ -5,13 +5,7 @@
                 <message-node v-model="value.text" @focused="handelMessageFocused" />
             </div>
             <div class="replies-container">
-                <reply-node 
-                v-for="(reply,index) in this.value.replies" 
-                :key="index" 
-                :selected="reply.selected" 
-                v-model="reply.text" 
-                @focused="(focused)=>handelOptionFocused(index,reply,focused)" 
-                @delete="()=>handelOptionDelete(index,reply)" />
+                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focused="(focused)=>handelOptionFocused(index,reply,focused)" @delete="()=>handelDeleteReply(index,reply)" />
             </div>
             <div v-if="enableAddReply" class="add-reply">
                 <span @click="handelAddReply">+ ADD REPLY OPTION</span>
@@ -73,8 +67,30 @@
                     this.selectReply(reply);
                 }
             },
-            handelOptionDelete(index, reply) {
-                alert('delete reply: ' + reply.text);
+            handelDeleteReply(index, reply) {
+                const showConfirm = (reply.next.text && reply.next.text.length > 0) ||
+                    (reply.next.replies && reply.next.replies.length > 0);
+                if (showConfirm) {
+                    const res = confirm("This will erase the entire chain of nested replies! Are you sure?");
+                    if (!res)
+                        return;
+                }
+                if (reply.selected) {
+                    let toSelect = null;
+                    if (index > 0) {
+                        toSelect = this.value.replies[index - 1];
+                    } else if (index < this.value.replies.length - 1) {
+                        toSelect = this.value.replies[index + 1];
+                    }
+                    if (toSelect != null)
+                        this.selectReply(toSelect);
+                }
+                this.value.replies.splice(index, 1);
+            },
+            handelDeleteDialog(index, dialog) {
+                const res = confirm("This will erase the dialog and related data! Are you sure?");
+                if (!res)
+                    return;
             },
             handelAddReply() {
                 let reply = new Reply();
