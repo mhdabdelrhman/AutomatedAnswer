@@ -1,6 +1,6 @@
 <template>
     <div :class="['reply-container',selected ?'reply-active':'']">
-        <input type="text" v-model="text" @input="handelChange" @blur="handelFocus(false)" @focus="handelFocus(true)" placeholder="Reply option" :style="{'width':width}">
+        <input type="text" v-model="text" @input="handelChange" @blur="handelFocus(false)" @focus="handelFocus(true)" :placeholder="placeHolder" :style="{'width':width}">
     </div>
 </template>
 
@@ -20,12 +20,12 @@
         data() {
             return {
                 text: this.value,
-                focused: true,
+                placeHolder: 'Reply option'
             }
         },
         computed: {
             width() {
-                let txt = 'Reply option';
+                let txt = this.placeHolder;
                 if (this.text && this.text.length > 0)
                     txt = this.text;
                 return ((txt.length + 1) * 6.5) + 'px';
@@ -36,10 +36,7 @@
                 this.$emit('input', this.text);
             },
             handelFocus(isFocused) {
-                if (this.focused != isFocused) {
-                    this.focused = isFocused;
-                    this.$emit('focusToggled', this.focused);
-                }
+                this.$emit('focused', isFocused);
             }
         },
         watch: {

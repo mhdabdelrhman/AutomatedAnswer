@@ -2,16 +2,16 @@
     <div v-if="value" class="chain-container" :id="value.id">
         <div>
             <div class="message-node">
-                <message-node v-model="value.text" @focusToggled="handelMessageFocusToggled" />
+                <message-node v-model="value.text" @focused="handelMessageFocused" />
             </div>
             <div class="replies-container">
-                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focusToggled="(focused)=>handelOptionFocusToggled(index,reply,focused)" />
+                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focused="(focused)=>handelOptionFocused(index,reply,focused)" />
             </div>
             <div v-if="enableAddReply" class="add-reply">
                 <span @click="handelAddReply">+ ADD REPLY OPTION</span>
             </div>
             <transition name="fade">
-                <chain-node v-if="selectedReply && showReply" v-model="selectedReply.next" @messageFocusToggled="handelMessageFocusToggled" />
+                <chain-node v-if="selectedReply && showNextReply" v-model="selectedReply.next" @messageFocused="handelMessageFocused" />
             </transition>
         </div>
     </div>
@@ -41,7 +41,7 @@
         },
         data() {
             return {
-                showReply: true,
+                showNextReply: true,
             }
         },
         computed: {
@@ -59,10 +59,10 @@
             }
         },
         methods: {
-            handelMessageFocusToggled(focused) {
-                this.$emit("messageFocusToggled", focused);
+            handelMessageFocused(focused) {
+                this.$emit("messageFocused", focused);
             },
-            handelOptionFocusToggled(index, reply, focused) {
+            handelOptionFocused(index, reply, focused) {
                 if (focused) {
                     this.selectReply(reply);
                 }
@@ -74,14 +74,14 @@
             },
             selectReply(reply) {
                 if (!reply.selected) {
-                    this.showReply = false;
+                    this.showNextReply = false;
                     this.value.replies.forEach(x => x.selected = false);
                     reply.selected = true;
                     setTimeout(() => {
-                        this.showReply = true;
+                        this.showNextReply = true;
                     }, 100);
                 }
-            }
+            },            
         },
     }
 </script>
