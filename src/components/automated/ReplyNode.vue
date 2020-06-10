@@ -1,113 +1,112 @@
 <template>
-    <div v-if="value" class="reply-container" :id="value.id">
-        <div>
-            <div class="message-node">
-                <message-node v-model="value.text" @focusToggled="handelMessageFocusToggled" />
+    <div :class="['reply-container',selected||hover ?'reply-active':'']" @mouseover="hover = true" @mouseleave="hover = false">
+        <input type="text" 
+        v-model="text" 
+        @input="handelChange" 
+        @blur="handelFocus(false)" 
+        @focus="handelFocus(true)" 
+        :placeholder="placeHolder" 
+        :style="{'width':width}">
+
+        <transition name="fade">
+            <div v-show="hover">
+                <span @click="handelDelete">X</span>
             </div>
-            <div class="options-container">
-                <option-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focusToggled="(focused)=>handelOptionFocusToggled(index,reply,focused)" />
-            </div>
-            <div v-if="enableAddReply" class="add-reply">
-                <span @click="handelAddReply">+ ADD REPLY OPTION</span>
-            </div>
-            <transition name="fade">
-                <reply-node v-if="selectedReply && showReply" v-model="selectedReply.next" @messageFocusToggled="handelMessageFocusToggled" />
-            </transition>
-        </div>
+        </transition>
     </div>
 </template>
 
 <script>
-    import {
-        Chain,
-        Reply
-    } from './models'
-    import MessageNode from './MessageNode'
-    import OptionNode from './OptionNode'
-    import ReplyNode from './ReplyNode'
     export default {
         name: 'reply-node',
-        components: {
-            'message-node': MessageNode,
-            'option-node': OptionNode,
-            'reply-node': ReplyNode,
-        },
         props: {
             value: {
-                type: Chain,
-                default: () => new Chain(),
+                type: String,
+                default: "",
+            },
+            selected: {
+                type: Boolean,
+                default: false,
             }
         },
         data() {
             return {
-                showReply: true,
+                text: this.value,
+                placeHolder: 'Reply option',
+                hover: false,
             }
         },
         computed: {
-            enableAddReply() {
-                return this.value &&
-                    ((this.value.text && this.value.text.length > 0) ||
-                        (this.value.replies && this.value.replies.length > 0));
-            },
-            selectedReply() {
-                if (this.value && this.value.replies) {
-                    let selected = this.value.replies.find(x => x.selected == true);
-                    return selected;
-                }
-                return null;
+            width() {
+                let txt = this.placeHolder;
+                if (this.text && this.text.length > 0)
+                    txt = this.text;
+                return ((txt.length + 1) * 6.5) + 'px';
             }
         },
         methods: {
-            handelMessageFocusToggled(focused) {
-                this.$emit("messageFocusToggled", focused);
+            handelChange() {
+                this.$emit('input', this.text);
             },
-            handelOptionFocusToggled(index, reply, focused) {
-                if (focused) {
-                    this.selectReply(reply);
-                }
+            handelFocus(isFocused) {
+                this.$emit('focused', isFocused);
             },
-            handelAddReply() {
-                let reply = new Reply();
-                this.value.replies.push(reply);
-                this.selectReply(reply);
-            },
-            selectReply(reply) {
-                if (!reply.selected) {
-                    this.showReply = false;
-                    this.value.replies.forEach(x => x.selected = false);
-                    reply.selected = true;
-                    setTimeout(() => {
-                        this.showReply = true;
-                    }, 100);
-                }
+            handelDelete() {
+                this.$emit('delete');
             }
         },
+        watch: {
+            value: function(to, from) {
+                this.text = to;
+            }
+        }
     }
 </script>
 <style>
-    .reply-container .message-node {
-        padding-right: 2em;
+    .reply-container {
+        display: inline-block;
+        margin: 5px;
+        padding: 5px 15px;
+        border-radius: 25px;
+        border: 1px solid #3A97F9;
+        background-color: white;
+        position: relative;
     }
-    .options-container {
-        text-align: end;
+    .reply-container input {
+        min-width: 12px;
+        max-width: 200px;
+        height: 30px;
+        background-color: transparent;
+        border: 0px;
+        color: #3A97F9;
     }
-    .add-reply {
+    .reply-container input::placeholder {
+        color: #82BEFD;
+    }
+    .reply-container div {
+        display: inline-block;
+        width: 21px;
+        height: 19px;
+        position: absolute;
+        top: -4px;
+        right: -8px;
+        background-color: white;
+        color: #3A97F9;
+        border-radius: 14px;
+        border: 1px solid #3A97F9;
         cursor: pointer;
-        text-align: end;
-        color: #4DA2FC;
-        padding: 0 8px;
-        font-weight: bold;
-        font-size: 75%;
-        margin: 5px 0;
+        text-align: center;
+        padding-top: 2px;
     }
-    .fade-enter-active {
-        transition: opacity .5s
+    .reply-container div:hover {
+        background-color: #3A97F9;
+        color: white;
+        border-color: white;
     }
-    .fade-leave-active {
-        transition: opacity .25s
+    .reply-active {
+        background-color: #3A97F9;
     }
-    .fade-enter,
-    .fade-leave-to {
-        opacity: 0
+    .reply-active input {
+        color: white;
     }
 </style>

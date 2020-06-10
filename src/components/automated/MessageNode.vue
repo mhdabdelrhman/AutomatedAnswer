@@ -1,6 +1,6 @@
 <template>
     <div class="message-container">
-        <input type="text" v-model="text" @input="handelChange" @blur="handelFocus(false)" @focus="handelFocus(true)" placeholder="Bot message">
+        <input type="text" v-model="text" @input="handelChange" @blur="handelFocus(false)" @focus="handelFocus(true)" :placeholder="placeHolder">
     </div>
 </template>
 
@@ -16,7 +16,7 @@
         data() {
             return {
                 text: this.value,
-                focused: false,
+                placeHolder: 'Bot message'
             }
         },
         methods: {
@@ -24,10 +24,7 @@
                 this.$emit('input', this.text);
             },
             handelFocus(isFocused) {
-                if (this.focused != isFocused) {
-                    this.focused = isFocused;
-                    this.$emit('focusToggled', this.focused);
-                }
+                this.$emit('focused', isFocused);
             }
         },
         watch: {
