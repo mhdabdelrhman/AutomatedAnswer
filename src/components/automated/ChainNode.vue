@@ -73,8 +73,24 @@
                     this.selectReply(reply);
                 }
             },
-            handelOptionDelete(index, reply) {
-                alert('delete reply: ' + reply.text);
+            handelDeleteReply(index, reply) {
+                const showConfirm = (reply.next.text && reply.next.text.length > 0) ||
+                    (reply.next.replies && reply.next.replies.length > 0);
+                if (showConfirm) {
+                    const res = confirm("This will erase the entire chain of nested replies! Are you sure?");
+                    if (!res)
+                        return;
+                }
+                this.value.replies.splice(index, 1);
+                if (reply.selected && this.value.replies.length > 0) {
+                    const nIndex = this.value.replies.length % (index - 1);                      
+                    this.selectReply(this.value.replies[nIndex]);                    
+                }
+            },
+            handelDeleteDialog(index, dialog) {
+                const res = confirm("This will erase the dialog and related data! Are you sure?");
+                if (!res)
+                    return;
             },
             handelAddReply() {
                 let reply = new Reply();
