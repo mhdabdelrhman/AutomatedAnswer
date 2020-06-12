@@ -11,7 +11,7 @@
                 :selected="reply.selected" 
                 v-model="reply.text" 
                 @focused="(focused)=>handelOptionFocused(index,reply,focused)" 
-                @delete="()=>handelOptionDelete(index,reply)" />
+                @delete="()=>handelOptionDelete(index,reply)" @enterrplay="handelAddReply"/>
             </div>
             <div v-if="enableAddReply" class="add-reply">
                 <span @click="handelAddReply">+ ADD REPLY OPTION</span>
@@ -78,7 +78,7 @@
             },
             handelAddReply() {
                 let reply = new Reply();
-                this.value.replies.push(reply);
+                this.value.replies.unshift(reply);
                 this.selectReply(reply);
             },
             selectReply(reply) {
