@@ -2,12 +2,12 @@
     <div :class="['reply-container',selected||hover ?'reply-active':'']" @mouseover="hover = true" @mouseleave="hover = false">
         <input type="text" 
         v-model="text" 
+        :placeholder="placeHolder" 
+        :style="{'width':width}"
         @input="handelChange" 
         @blur="handelFocus(false)" 
         @focus="handelFocus(true)" 
-        :placeholder="placeHolder" 
-        :style="{'width':width}"
-        @keypress.enter="handelAddReplyEnter"
+        @keypress.enter="handelEnter"
         >
 
         <transition name="fade">
@@ -56,8 +56,8 @@
             handelDelete() {
                 this.$emit('delete');
             },
-            handelAddReplyEnter(){
-                this.$emit('enterrplay')
+            handelEnter(){
+                this.$emit('enterPressed');
             }
         },
         watch: {
