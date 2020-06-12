@@ -75,17 +75,11 @@
                     if (!res)
                         return;
                 }
-                if (reply.selected) {
-                    let toSelect = null;
-                    if (index > 0) {
-                        toSelect = this.value.replies[index - 1];
-                    } else if (index < this.value.replies.length - 1) {
-                        toSelect = this.value.replies[index + 1];
-                    }
-                    if (toSelect != null)
-                        this.selectReply(toSelect);
-                }
                 this.value.replies.splice(index, 1);
+                if (reply.selected && this.value.replies.length > 0) {
+                    const nIndex = this.value.replies.length % (index - 1);                      
+                    this.selectReply(this.value.replies[nIndex]);                    
+                }
             },
             handelDeleteDialog(index, dialog) {
                 const res = confirm("This will erase the dialog and related data! Are you sure?");
