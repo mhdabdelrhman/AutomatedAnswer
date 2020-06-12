@@ -6,7 +6,9 @@
         @blur="handelFocus(false)" 
         @focus="handelFocus(true)" 
         :placeholder="placeHolder" 
-        :style="{'width':width}">
+        :style="{'width':width}"
+        @keypress.enter="handelAddReplyEnter"
+        >
 
         <transition name="fade">
             <div v-show="hover">
@@ -53,6 +55,9 @@
             },
             handelDelete() {
                 this.$emit('delete');
+            },
+            handelAddReplyEnter(){
+                this.$emit('enterrplay')
             }
         },
         watch: {
