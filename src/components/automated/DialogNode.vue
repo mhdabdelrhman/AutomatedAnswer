@@ -1,6 +1,6 @@
 <template>
     <div class="dialog-container" @mouseover="hover = true" @mouseleave="hover = false">
-        <span>{{value}}</span>
+        <label>{{value}}</label>
         <i @click="handelEdit">Edit</i>
         <transition name="fade">
             <div v-show="hover">
@@ -45,12 +45,11 @@
     .dialog-container {
         display: inline-block;
         margin: 5px;
-        padding: 5px 15px;
+        padding: 12px 15px;
         border-radius: 25px;
         border: 1px solid #E07B21;
         background-color: white;
         position: relative;
-        height: 38px;
     }
     .dialog-container div {
         display: inline-block;
