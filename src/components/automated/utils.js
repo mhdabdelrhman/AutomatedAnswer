@@ -5,12 +5,8 @@ export var generateId =  function () {
     return Math.random().toString(36).substr(2, 9);
 };
 
-export var deepClone = function(obj,type){
-    let plainObj = JSON.parse(JSON.stringify(obj));
-    if(!type)
-        return plainObj;
-    // convert plainObj to  type
-    return  Object.assign(type, plainObj);    
+export var deepClone = function(obj){
+    return JSON.parse(JSON.stringify(obj));
 };
 
 
