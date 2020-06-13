@@ -1,14 +1,21 @@
 <template>
     <div class="conversation-container">
         <chain-node v-model="chain"></chain-node>
-        <div>
-            <span @click="saveTreeToLocalStorage">Save</span>
+        <div v-if="showButtons">
+            <span @click="handelDiscard">Discard </span>
+            <span @click="handelSave"> Save</span>
         </div>
     </div>
 </template>
 
 <script>
-    import tree from './models'
+    import {
+        tree,
+        Chain
+    } from './models'
+    import {
+        deepClone
+    } from './utils'
     import ChainNode from './ChainNode'
     export default {
         name: 'conversation',
@@ -18,29 +25,54 @@
         data() {
             return {
                 chain: tree,
+                lastChain: tree,
+                timerWrittenChain:"",
+                storageName: "_chain_",
+            }
+        },
+        computed: {
+            showButtons() {
+                return JSON.stringify(this.chain) != JSON.stringify(this.lastChain);
             }
         },
         methods: {
-            saveTreeToLocalStorage() {
-                console.log("chain:",JSON.stringify(this.chain));
-                localStorage.setItem("chain", JSON.stringify(this.chain));
+            handelSave() {
+                this.saveTreeToLocalStorage(this.chain);
+                this.lastChain = deepClone(this.chain, new Chain);
             },
-            loadTreeFromLocalStorage(){
-                var loadedChain = JSON.parse(localStorage.getItem("chain"));
-                return loadedChain;
+            handelDiscard() {
+                this.chain = deepClone(this.lastChain, new Chain);
+                this.saveTreeToLocalStorage(this.chain);
+            },
+            saveTreeToLocalStorage(chainObject) {
+                if(chainObject){
+                    localStorage.setItem(this.storageName, JSON.stringify(chainObject));
+                }
+            },
+            loadTreeFromLocalStorage() {
+                if (localStorage.getItem(this.storageName) && localStorage.getItem(this.storageName).length > 0) {
+                    let plainObj = JSON.parse(localStorage.getItem(this.storageName));
+                    // convert plainObj to Chain object type
+                    return deepClone(plainObj, new Chain);
+                }
+                return tree;
             },
             timer() {
                 setInterval(() => {
-                    this.saveTreeToLocalStorage();
+                    if(this.timerWrittenChain != JSON.stringify(this.chain)){
+                        this.timerWrittenChain = JSON.stringify(this.chain);
+                        this.saveTreeToLocalStorage(this.chain);
+                    }
                 }, 2000);
-    }
+            }
         },
         created() {
-            // i get error for this 
-            // this.chain = this.loadTreeFromLocalStorage()
-            this.timer()
-            //now this return chain every 2 sec and i test to get chain and it is updated in every 2 sec
+            this.lastChain = this.loadTreeFromLocalStorage();
+            this.chain = deepClone(this.lastChain,new Chain);
+            this.timer();
         },
     }
 </script>
-<style></style>
+<style>
+
+</style>
