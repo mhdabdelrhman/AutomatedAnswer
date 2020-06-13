@@ -22,6 +22,7 @@
 
 <script>
     import {
+        tree,
         Chain,
         Reply,
         Dialog
@@ -40,8 +41,8 @@
         },
         props: {
             value: {
-                type: Chain,
-                default: () => new Chain(),
+                type: Object,
+                default: tree,
             }
         },
         data() {

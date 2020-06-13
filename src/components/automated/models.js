@@ -1,4 +1,4 @@
-import generateId from './utils'
+import { generateId } from './utils'
 
 export class Chain {
 	constructor() {
@@ -26,6 +26,4 @@ export class Dialog {
 	}
 }
 
-var tree = new Chain();
-
-export default tree;
+export var tree = new Chain();
