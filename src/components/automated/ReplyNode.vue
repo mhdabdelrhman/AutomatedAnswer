@@ -33,7 +33,7 @@
             },
             id: {
                 type: String,
-                default: ''
+                default: ""
             }
         },
         data() {
@@ -41,6 +41,12 @@
                 text: this.value,
                 placeHolder: 'Reply option',
                 hover: false,
+            }
+        },
+        mounted(){
+            if(this.selected){
+                let input = document.getElementById(this.id);
+                input.focus();
             }
         },
         computed: {
@@ -68,12 +74,7 @@
         watch: {
             value: function(to, from) {
                 this.text = to;
-            },
-            selected: function(to,from) {
-                if (to != from && to) {
-                    document.getElementById(this.id).focus();
-                }
-            }
+            },            
         }
     }
 </script>

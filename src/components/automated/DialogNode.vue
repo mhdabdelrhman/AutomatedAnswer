@@ -1,6 +1,6 @@
 <template>
     <div class="dialog-container" @mouseover="hover = true" @mouseleave="hover = false">
-        <label>{{value}}</label>
+        <label :id="id" >{{value}}</label>
         <i @click="handelEdit">Edit</i>
         <transition name="fade">
             <div v-show="hover">
@@ -17,6 +17,10 @@
             value: {
                 type: String,
                 default: "",
+            },
+            id: {
+                type: String,
+                default: ""
             }
         },
         data() {
