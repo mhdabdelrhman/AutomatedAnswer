@@ -8,6 +8,7 @@
         @blur="handelFocus(false)" 
         @focus="handelFocus(true)" 
         @keypress.enter="handelEnter"
+        :id="id"
         >
 
         <transition name="fade">
@@ -29,6 +30,10 @@
             selected: {
                 type: Boolean,
                 default: false,
+            },
+            id: {
+                type: String,
+                default: ''
             }
         },
         data() {
@@ -63,6 +68,11 @@
         watch: {
             value: function(to, from) {
                 this.text = to;
+            },
+            selected: function(to,from) {
+                if (to != from && to) {
+                    document.getElementById(this.id).focus();
+                }
             }
         }
     }

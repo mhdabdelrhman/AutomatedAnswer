@@ -5,7 +5,7 @@
                 <message-node v-model="value.text" @focused="handelMessageFocused" />
             </div>
             <div class="replies-dialogs-container">
-                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focused="(focused)=>handelFocusReply(index,reply,focused)" @delete="handelDeleteReply(index,reply)" @enterPressed="handelAddReply" />
+                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focused="(focused)=>handelFocusReply(index,reply,focused)" @delete="handelDeleteReply(index,reply)" @enterPressed="handelAddReply" :id="reply.id"/>
                 <dialog-node v-for="(dialog,index) in this.value.dialogs" :key="index" v-model="dialog.text" @delete="handelDeleteDialog(index,dialog)" @edit="handelEditDialog(index,dialog)" />
             </div>
             <div class="add-dialog-reply">
@@ -102,7 +102,7 @@
             },
             handelAddReply() {
                 let reply = new Reply();
-                this.value.replies.unshift(reply);
+                this.value.replies.push(reply);
                 this.selectReply(reply);
             },
             handelAddDialog() {
