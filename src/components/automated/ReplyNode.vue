@@ -10,7 +10,6 @@
         @keypress.enter="handelEnter"
         :id="id"
         >
-
         <transition name="fade">
             <div v-show="hover">
                 <span @click="handelDelete">X</span>
@@ -67,7 +66,7 @@
             handelDelete() {
                 this.$emit('delete');
             },
-            handelEnter(){
+            handelEnter() {
                 this.$emit('enterPressed');
             }
         },
@@ -78,51 +77,55 @@
         }
     }
 </script>
-<style>
+<style lang="scss">
+    $reply-color-b:#3A97F9;
+    $reply-color-f:white;
+    $reply-place-holder:#82BEFD;
+    
     .reply-container {
         display: inline-block;
         margin: 5px;
         padding: 5px 15px;
         border-radius: 25px;
-        border: 1px solid #3A97F9;
-        background-color: white;
+        border: 1px solid $reply-color-b;
+        background-color: $reply-color-f;
         position: relative;
-    }
-    .reply-container input {
-        min-width: 12px;
-        max-width: 200px;
-        height: 30px;
-        background-color: transparent;
-        border: 0px;
-        color: #3A97F9;
-    }
-    .reply-container input::placeholder {
-        color: #82BEFD;
-    }
-    .reply-container div {
-        display: inline-block;
-        width: 21px;
-        height: 19px;
-        position: absolute;
-        top: -4px;
-        right: -8px;
-        background-color: white;
-        color: #3A97F9;
-        border-radius: 14px;
-        border: 1px solid #3A97F9;
-        cursor: pointer;
-        text-align: center;
-        padding-top: 2px;
-    }
-    .reply-container div:hover {
-        background-color: #3A97F9;
-        color: white;
-        border-color: white;
+        input {
+            min-width: 12px;
+            max-width: 200px;
+            height: 30px;
+            background-color: transparent;
+            border: 0px;
+            color: $reply-color-b;
+        }
+        input::placeholder {
+            color: $reply-place-holder;
+        }
+        div {
+            display: inline-block;
+            width: 21px;
+            height: 19px;
+            position: absolute;
+            top: -4px;
+            right: -8px;
+            background-color: $reply-color-f;
+            color: $reply-color-b;
+            border-radius: 14px;
+            border: 1px solid $reply-color-b;
+            cursor: pointer;
+            text-align: center;
+            padding-top: 2px;
+        }
+        div:hover {
+            background-color: $reply-color-b;
+            color: $reply-color-f;
+            border-color: $reply-color-f;
+        }
     }
     .reply-active {
-        background-color: #3A97F9;
-    }
-    .reply-active input {
-        color: white;
+        background-color: $reply-color-b;
+        input {
+            color: $reply-color-f;
+        }
     }
 </style>

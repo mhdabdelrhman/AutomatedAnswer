@@ -95,7 +95,7 @@
                 const res = confirm("This will erase the dialog and related data! Are you sure?");
                 if (!res)
                     return;
-                    this.value.dialogs.splice(index, 1);
+                this.value.dialogs.splice(index, 1);
             },
             handelEditDialog(index, dialog) {
                 alert("edit dialog here");
@@ -127,39 +127,43 @@
         },
     }
 </script>
-<style>
-    .chain-container .message-node {
-        padding-right: 2em;
-    }
-    .replies-dialogs-container {
-        text-align: end;
-    }
-    .add-dialog-reply {
-        text-align: end;
-        padding: 0 8px;
-        font-weight: bold;
-        font-size: 75%;
-        margin: 5px 0;
-    }
-    .add-dialog-reply span {
-        margin-left: 20px;
-    }
-    .add-dialog {
-        cursor: pointer;
-        color: #E07B21;
-    }
-    .add-reply {
-        cursor: pointer;
-        color: #4DA2FC;
-    }
-    .fade-enter-active {
-        transition: opacity .5s
-    }
-    .fade-leave-active {
-        transition: opacity .25s
-    }
-    .fade-enter,
-    .fade-leave-to {
-        opacity: 0
+<style lang="scss">
+    $reply-color:#3A97F9;
+    $dialog-color:#E07B21;
+    .chain-container {
+        .message-node {
+            padding-right: 2em;
+        }
+        .replies-dialogs-container {
+            text-align: end;
+        }
+        .add-dialog-reply {
+            text-align: end;
+            padding: 0 8px;
+            font-weight: bold;
+            font-size: 75%;
+            margin: 5px 0;
+            span {
+                margin-left: 20px;
+            }
+            .add-dialog {
+                cursor: pointer;
+                color: $dialog-color;
+            }
+            .add-reply {
+                cursor: pointer;
+                color: $reply-color;
+            }
+        }
+        .fade-enter-active {
+            transition: opacity .5s
+        }
+        .fade-leave-active {
+            transition: opacity .25s
+        }
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0
+        }
     }
 </style>
