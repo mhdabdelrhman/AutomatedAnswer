@@ -87,7 +87,7 @@
                 }
                 this.value.replies.splice(index, 1);
                 if (reply.selected && this.value.replies.length > 0) {
-                    const nIndex = this.value.replies.length % (index - 1);
+                    const nIndex = (index - 1) == 0 ? 0 : this.value.replies.length % (index - 1);
                     this.selectReply(this.value.replies[nIndex]);
                 }
             },
