@@ -1,6 +1,15 @@
 <template>
     <div :class="['reply-container',selected||hover ?'reply-active':'']" @mouseover="hover = true" @mouseleave="hover = false">
-        <input type="text" v-model="text" :placeholder="placeHolder" :style="{'width':width}" @input="handelChange" @blur="handelFocus(false)" @focus="handelFocus(true)" @keypress.enter="handelEnter">
+        <input type="text" 
+        v-model="text" 
+        :placeholder="placeHolder" 
+        :style="{'width':width}"
+        @input="handelChange" 
+        @blur="handelFocus(false)" 
+        @focus="handelFocus(true)" 
+        @keypress.enter="handelEnter"
+        :id="id"
+        >
         <transition name="fade">
             <div v-show="hover">
                 <span @click="handelDelete">X</span>
@@ -20,6 +29,10 @@
             selected: {
                 type: Boolean,
                 default: false,
+            },
+            id: {
+                type: String,
+                default: ""
             }
         },
         data() {
@@ -27,6 +40,12 @@
                 text: this.value,
                 placeHolder: 'Reply option',
                 hover: false,
+            }
+        },
+        mounted(){
+            if(this.selected){
+                let input = document.getElementById(this.id);
+                input.focus();
             }
         },
         computed: {
@@ -54,7 +73,7 @@
         watch: {
             value: function(to, from) {
                 this.text = to;
-            }
+            },            
         }
     }
 </script>
