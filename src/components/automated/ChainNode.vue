@@ -1,22 +1,20 @@
 <template>
     <div v-if="value" class="chain-container" :id="value.id">
-        <div>
-            <div class="message-node">
-                <message-node v-model="value.text" @focused="handelMessageFocused" />
-            </div>
-            <div class="replies-dialogs-container">
-                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" :id="reply.id" v-model="reply.text" @focused="(focused)=>handelFocusReply(index,reply,focused)" @delete="handelDeleteReply(index,reply)" @enterPressed="handelAddReply"/>
-                <dialog-node v-for="(dialog,index) in this.value.dialogs" :key="index" :id="dialog.id" v-model="dialog.text" @delete="handelDeleteDialog(index,dialog)" @edit="handelEditDialog(index,dialog)" />
-            </div>
-            <div class="add-dialog-reply">
-                <span class="add-dialog" v-if="enableAddDialog" @click="handelAddDialog">+ ADD DIALOG OPTION</span>
-                <span v-if="enableAddDialog && enableAddReply">|</span>
-                <span class="add-reply" v-if="enableAddReply" @click="handelAddReply">+ ADD REPLY OPTION</span>
-            </div>
-            <transition name="fade">
-                <chain-node v-if="selectedReply && showNextReply" v-model="selectedReply.next" @messageFocused="handelMessageFocused" />
-            </transition>
+        <div class="message-node">
+            <message-node v-model="value.text" @focused="handelMessageFocused" />
         </div>
+        <div class="replies-dialogs-container">
+            <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" :id="reply.id" v-model="reply.text" @focused="(focused)=>handelFocusReply(index,reply,focused)" @delete="handelDeleteReply(index,reply)" @enterPressed="handelAddReply"/>
+            <dialog-node v-for="(dialog,index) in this.value.dialogs" :key="index" :id="dialog.id" v-model="dialog.text" @delete="handelDeleteDialog(index,dialog)" @edit="handelEditDialog(index,dialog)" />
+        </div>
+        <div class="add-dialog-reply">
+            <span class="add-dialog" v-if="enableAddDialog" @click="handelAddDialog">+ ADD DIALOG OPTION</span>
+            <span v-if="enableAddDialog && enableAddReply">|</span>
+            <span class="add-reply" v-if="enableAddReply" @click="handelAddReply">+ ADD REPLY OPTION</span>
+        </div>
+        <transition name="fade">
+            <chain-node v-if="selectedReply && showNextReply" v-model="selectedReply.next" @messageFocused="handelMessageFocused" />
+        </transition>
     </div>
 </template>
 
