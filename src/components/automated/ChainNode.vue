@@ -1,22 +1,20 @@
 <template>
     <div v-if="value" class="chain-container" :id="value.id">
-        <div>
-            <div class="message-node">
-                <message-node v-model="value.text" @focused="handelMessageFocused" />
-            </div>
-            <div class="replies-dialogs-container">
-                <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" v-model="reply.text" @focused="(focused)=>handelFocusReply(index,reply,focused)" @delete="handelDeleteReply(index,reply)" @enterPressed="handelAddReply" />
-                <dialog-node v-for="(dialog,index) in this.value.dialogs" :key="index" v-model="dialog.text" @delete="handelDeleteDialog(index,dialog)" @edit="handelEditDialog(index,dialog)" />
-            </div>
-            <div class="add-dialog-reply">
-                <span class="add-dialog" v-if="enableAddDialog" @click="handelAddDialog">+ ADD DIALOG OPTION</span>
-                <span v-if="enableAddDialog && enableAddReply">|</span>
-                <span class="add-reply" v-if="enableAddReply" @click="handelAddReply">+ ADD REPLY OPTION</span>
-            </div>
-            <transition name="fade">
-                <chain-node v-if="selectedReply && showNextReply" v-model="selectedReply.next" @messageFocused="handelMessageFocused" />
-            </transition>
+        <div class="message-node">
+            <message-node v-model="value.text" @focused="handelMessageFocused" />
         </div>
+        <div class="replies-dialogs-container">
+            <reply-node v-for="(reply,index) in this.value.replies" :key="index" :selected="reply.selected" :id="reply.id" v-model="reply.text" @focused="(focused)=>handelFocusReply(index,reply,focused)" @delete="handelDeleteReply(index,reply)" @enterPressed="handelAddReply"/>
+            <dialog-node v-for="(dialog,index) in this.value.dialogs" :key="index" :id="dialog.id" v-model="dialog.text" @delete="handelDeleteDialog(index,dialog)" @edit="handelEditDialog(index,dialog)" />
+        </div>
+        <div class="add-dialog-reply">
+            <span class="add-dialog" v-if="enableAddDialog" @click="handelAddDialog">+ ADD DIALOG OPTION</span>
+            <span v-if="enableAddDialog && enableAddReply">|</span>
+            <span class="add-reply" v-if="enableAddReply" @click="handelAddReply">+ ADD REPLY OPTION</span>
+        </div>
+        <transition name="fade">
+            <chain-node v-if="selectedReply && showNextReply" v-model="selectedReply.next" @messageFocused="handelMessageFocused" />
+        </transition>
     </div>
 </template>
 
@@ -87,7 +85,7 @@
                 }
                 this.value.replies.splice(index, 1);
                 if (reply.selected && this.value.replies.length > 0) {
-                    const nIndex = this.value.replies.length % (index - 1);
+                    const nIndex = (index - 1) == 0 ? 0 : this.value.replies.length % (index - 1);
                     this.selectReply(this.value.replies[nIndex]);
                 }
             },
@@ -95,14 +93,14 @@
                 const res = confirm("This will erase the dialog and related data! Are you sure?");
                 if (!res)
                     return;
-                    this.value.dialogs.splice(index, 1);
+                this.value.dialogs.splice(index, 1);
             },
             handelEditDialog(index, dialog) {
                 alert("edit dialog here");
             },
             handelAddReply() {
                 let reply = new Reply();
-                this.value.replies.unshift(reply);
+                this.value.replies.push(reply);
                 this.selectReply(reply);
             },
             handelAddDialog() {
@@ -127,39 +125,43 @@
         },
     }
 </script>
-<style>
-    .chain-container .message-node {
-        padding-right: 2em;
-    }
-    .replies-dialogs-container {
-        text-align: end;
-    }
-    .add-dialog-reply {
-        text-align: end;
-        padding: 0 8px;
-        font-weight: bold;
-        font-size: 75%;
-        margin: 5px 0;
-    }
-    .add-dialog-reply span {
-        margin-left: 20px;
-    }
-    .add-dialog {
-        cursor: pointer;
-        color: #E07B21;
-    }
-    .add-reply {
-        cursor: pointer;
-        color: #4DA2FC;
-    }
-    .fade-enter-active {
-        transition: opacity .5s
-    }
-    .fade-leave-active {
-        transition: opacity .25s
-    }
-    .fade-enter,
-    .fade-leave-to {
-        opacity: 0
+<style lang="scss">
+    $reply-color:#3A97F9;
+    $dialog-color:#E07B21;
+    .chain-container {
+        .message-node {
+            padding-right: 2em;
+        }
+        .replies-dialogs-container {
+            text-align: end;
+        }
+        .add-dialog-reply {
+            text-align: end;
+            padding: 0 8px;
+            font-weight: bold;
+            font-size: 75%;
+            margin: 5px 0;
+            span {
+                margin-left: 20px;
+            }
+            .add-dialog {
+                cursor: pointer;
+                color: $dialog-color;
+            }
+            .add-reply {
+                cursor: pointer;
+                color: $reply-color;
+            }
+        }
+        .fade-enter-active {
+            transition: opacity .5s
+        }
+        .fade-leave-active {
+            transition: opacity .25s
+        }
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0
+        }
     }
 </style>

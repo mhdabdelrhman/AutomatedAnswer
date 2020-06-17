@@ -38,10 +38,10 @@
         methods: {
             handelSave() {
                 this.saveTreeToLocalStorage(this.chain);
-                this.lastChain = deepClone(this.chain, new Chain);
+                this.lastChain = deepClone(this.chain);
             },
             handelDiscard() {
-                this.chain = deepClone(this.lastChain, new Chain);
+                this.chain = deepClone(this.lastChain);
                 this.saveTreeToLocalStorage(this.chain);
             },
             saveTreeToLocalStorage(chainObject) {
@@ -51,9 +51,7 @@
             },
             loadTreeFromLocalStorage() {
                 if (localStorage.getItem(this.storageName) && localStorage.getItem(this.storageName).length > 0) {
-                    let plainObj = JSON.parse(localStorage.getItem(this.storageName));
-                    // convert plainObj to Chain object type
-                    return deepClone(plainObj, new Chain);
+                    return  JSON.parse(localStorage.getItem(this.storageName));
                 }
                 return tree;
             },
@@ -68,7 +66,7 @@
         },
         created() {
             this.lastChain = this.loadTreeFromLocalStorage();
-            this.chain = deepClone(this.lastChain,new Chain);
+            this.chain = deepClone(this.lastChain);
             this.timer();
         },
     }
