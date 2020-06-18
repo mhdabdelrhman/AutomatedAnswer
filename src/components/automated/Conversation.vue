@@ -1,5 +1,8 @@
 <template>
     <div class="conversation-container">
+        <div class="search">
+            <input type="text" v-model="searchText" placeholder="Search..." @keypress.enter="handelSearchEnter">
+        </div>
         <chain-node v-model="chain"></chain-node>
         <div v-if="showButtons">
             <span @click="handelDiscard">Discard </span>
@@ -11,7 +14,9 @@
 <script>
     import {
         tree,
-        Chain
+        Chain,
+        SearchService,
+        ApplySearchResult
     } from './models'
     import {
         deepClone
@@ -26,8 +31,10 @@
             return {
                 chain: tree,
                 lastChain: tree,
-                timerWrittenChain:"",
+                timerWrittenChain: "",
                 storageName: "_chain_",
+                searchText: "",
+                searchResults: [],
             }
         },
         computed: {
@@ -36,6 +43,18 @@
             }
         },
         methods: {
+            handelSearchEnter() {
+                if (!this.searchText || this.searchText.length == 0) {
+                    this.searchResults = [];
+                    return;
+                }
+                new SearchService(this.chain, this.searchText, (res) => {
+                    this.searchResults = res.results;
+                    if (this.searchResults && this.searchResults.length > 0) {
+                        ApplySearchResult(this.chain, this.searchResults[0]);
+                    }
+                });
+            },
             handelSave() {
                 this.saveTreeToLocalStorage(this.chain);
                 this.lastChain = deepClone(this.chain);
@@ -45,19 +64,19 @@
                 this.saveTreeToLocalStorage(this.chain);
             },
             saveTreeToLocalStorage(chainObject) {
-                if(chainObject){
+                if (chainObject) {
                     localStorage.setItem(this.storageName, JSON.stringify(chainObject));
                 }
             },
             loadTreeFromLocalStorage() {
                 if (localStorage.getItem(this.storageName) && localStorage.getItem(this.storageName).length > 0) {
-                    return  JSON.parse(localStorage.getItem(this.storageName));
+                    return JSON.parse(localStorage.getItem(this.storageName));
                 }
                 return tree;
             },
             timer() {
                 setInterval(() => {
-                    if(this.timerWrittenChain != JSON.stringify(this.chain)){
+                    if (this.timerWrittenChain != JSON.stringify(this.chain)) {
                         this.timerWrittenChain = JSON.stringify(this.chain);
                         this.saveTreeToLocalStorage(this.chain);
                     }
@@ -71,6 +90,17 @@
         },
     }
 </script>
-<style>
-
+<style lang="scss">
+    .conversation-container {
+        .search {
+            text-align: end;
+            input {
+                height: 30px;
+                border: 1px solid gray;
+                padding: 0 5px;
+                border-radius: 6px;
+                margin-bottom: 10px;
+            }
+        }
+    }
 </style>
