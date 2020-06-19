@@ -1,5 +1,5 @@
 <template>
-    <div class="dialog-container" @mouseover="hover = true" @mouseleave="hover = false">
+    <div class="dialog-container option-node" @mouseover="hover = true" @mouseleave="hover = false">
         <label :id="id" >{{value}}</label>
         <i @click="handelEdit">Edit</i>
         <transition name="fade">
@@ -45,19 +45,14 @@
 <style lang="scss">
     $dialog-color-b:#E07B21;
     $dialog-color-f:white;
-    .dialog-container {
-        display: inline-block;
-        margin: 5px;
-        padding: 12px 15px;
-        border-radius: 25px;
+    .dialog-container {        
         border: 1px solid $dialog-color-b;
         background-color: $dialog-color-b;
         color: $dialog-color-f;
-        position: relative;
         div {
             display: inline-block;
-            width: 21px;
-            height: 19px;
+            width: 1.4rem;
+            height: 1.45rem;
             position: absolute;
             top: -4px;
             right: -8px;
@@ -67,7 +62,6 @@
             border: 1px solid $dialog-color-b;
             cursor: pointer;
             text-align: center;
-            padding-top: 2px;
         }
         div:hover {
             background-color: $dialog-color-b;

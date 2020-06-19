@@ -53,24 +53,22 @@
     $msg-color-f:#666669;
     $msg-place-holder:#ADADB4;
     .message-container {
-        margin: 5px;
+        margin: 0.5rem;
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         .icon-container {
-            margin-right: 10px;
-            margin-top: 3px;
-            width: 30px;
-            width: 25px;
+            margin-right: 0.9rem;
+            margin-top: 0.2rem;
+            width: 1.5rem;
         }
         .input-container {
-            padding: 5px 15px;
+            padding: 0.5rem 1rem;
             background-color: $msg-color-b;
-            border-radius: 15px;
+            border-radius: 10px;
             flex-grow: 1;
             input {
                 width: 100%;
-                height: 30px;
                 background-color: transparent;
                 border: 0px;
                 color: $msg-color-f;
