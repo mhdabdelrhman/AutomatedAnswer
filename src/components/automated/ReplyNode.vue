@@ -1,5 +1,5 @@
 <template>
-    <div :class="['reply-container',selected||hover ?'reply-active':'']" @mouseover="hover = true" @mouseleave="hover = false">
+    <div :class="['reply-container option-node',selected||hover ?'reply-active':'']" @mouseover="hover = true" @mouseleave="hover = false">
         <input type="text" 
         v-model="text" 
         :placeholder="placeHolder" 
@@ -53,7 +53,7 @@
                 let txt = this.placeHolder;
                 if (this.text && this.text.length > 0)
                     txt = this.text;
-                return ((txt.length + 1) * 6.5) + 'px';
+                return ((txt.length + 1) * 7) + 'px';
             }
         },
         methods: {
@@ -83,17 +83,10 @@
     $reply-place-holder:#82BEFD;
     
     .reply-container {
-        display: inline-block;
-        margin: 5px;
-        padding: 5px 15px;
-        border-radius: 25px;
         border: 1px solid $reply-color-b;
         background-color: $reply-color-f;
-        position: relative;
         input {
-            min-width: 12px;
-            max-width: 200px;
-            height: 30px;
+            max-width: 17rem;
             background-color: transparent;
             border: 0px;
             color: $reply-color-b;
@@ -103,8 +96,8 @@
         }
         div {
             display: inline-block;
-            width: 21px;
-            height: 19px;
+            width: 1.4rem;
+            height: 1.45rem;
             position: absolute;
             top: -4px;
             right: -8px;
@@ -114,7 +107,6 @@
             border: 1px solid $reply-color-b;
             cursor: pointer;
             text-align: center;
-            padding-top: 2px;
         }
         div:hover {
             background-color: $reply-color-b;

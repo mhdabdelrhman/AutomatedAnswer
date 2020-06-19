@@ -91,13 +91,20 @@
     }
 </script>
 <style lang="scss">
+    .option-node {
+        display: inline-block;
+        margin: 0.5rem;
+        padding: 0.5rem 0.9rem;
+        border-radius: 25px;
+        position: relative;
+    }
     .conversation-container {
         .search {
             text-align: end;
             input {
-                height: 30px;
+                height: 2rem;
                 border: 1px solid gray;
-                padding: 0 5px;
+                padding: 0 0.5rem;
                 border-radius: 6px;
                 margin-bottom: 10px;
             }
