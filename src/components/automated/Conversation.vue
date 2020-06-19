@@ -14,7 +14,9 @@
         Chain
     } from './models'
     import {
-        deepClone
+        deepClone,
+        saveToLocalStorage,
+        loadFromLocalStorage
     } from './utils'
     import ChainNode from './ChainNode'
     export default {
@@ -25,41 +27,32 @@
         data() {
             return {
                 chain: tree,
-                lastChain: tree,
-                timerWrittenChain:"",
+                baseChain: tree,
+                timerWrittenChain: "",
+                baseStorageName: "_base_chain_",
                 storageName: "_chain_",
             }
         },
         computed: {
             showButtons() {
-                return JSON.stringify(this.chain) != JSON.stringify(this.lastChain);
+                return JSON.stringify(this.chain) != JSON.stringify(this.baseChain);
             }
         },
         methods: {
             handelSave() {
-                this.saveTreeToLocalStorage(this.chain);
-                this.lastChain = deepClone(this.chain);
+                saveToLocalStorage(this.chain, this.storageName);
+                saveToLocalStorage(this.chain, this.baseStorageName);
+                this.baseChain = deepClone(this.chain);
             },
             handelDiscard() {
-                this.chain = deepClone(this.lastChain);
-                this.saveTreeToLocalStorage(this.chain);
-            },
-            saveTreeToLocalStorage(chainObject) {
-                if(chainObject){
-                    localStorage.setItem(this.storageName, JSON.stringify(chainObject));
-                }
-            },
-            loadTreeFromLocalStorage() {
-                if (localStorage.getItem(this.storageName) && localStorage.getItem(this.storageName).length > 0) {
-                    return  JSON.parse(localStorage.getItem(this.storageName));
-                }
-                return tree;
+                this.chain = deepClone(this.baseChain);
+                saveToLocalStorage(this.chain, this.storageName);
             },
             timer() {
                 setInterval(() => {
-                    if(this.timerWrittenChain != JSON.stringify(this.chain)){
+                    if (this.timerWrittenChain != JSON.stringify(this.chain)) {
                         this.timerWrittenChain = JSON.stringify(this.chain);
-                        this.saveTreeToLocalStorage(this.chain);
+                        saveToLocalStorage(this.chain, this.storageName);
                     }
                 }, 2000);
             },
@@ -83,8 +76,8 @@
                 }
         },
         created() {
-            this.lastChain = this.loadTreeFromLocalStorage();
-            this.chain = deepClone(this.lastChain);
+            this.baseChain = loadFromLocalStorage(this.baseStorageName)||tree;
+            this.chain = loadFromLocalStorage(this.storageName)||tree;
             this.timer();
         },
     }
