@@ -52,9 +52,9 @@
                 new SearchService(this.chain, this.searchText, (res) => {
                     if (res.results.length > 0) {
                         res.results.forEach(r => {
-                            let txt = "Top node";
+                            let txt = res.chain.text;
                             r.forEach(p => {
-                                txt = txt.concat(" => " + p.text);
+                                txt = txt.concat(", " + p.text);
                             });
                             this.searchResults.push({
                                 text: txt,
