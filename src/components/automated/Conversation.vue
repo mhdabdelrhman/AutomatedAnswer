@@ -73,7 +73,7 @@
                     return false;
                     } else if (data.replies[i].next.replies.length > 0) {
                     if (!this.checkEmptyOption(data.replies[i].next)) {
-                        console.log("rim");
+                        
                         return false;
                     }
                     }
