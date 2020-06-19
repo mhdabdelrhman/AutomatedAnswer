@@ -137,12 +137,12 @@
         }
         .add-dialog-reply {
             text-align: end;
-            padding: 0 8px;
+            padding: 0 0.5rem;
             font-weight: bold;
             font-size: 75%;
-            margin: 5px 0;
+            margin: 0.5rem 0;
             span {
-                margin-left: 20px;
+                margin-left: 1rem;
             }
             .add-dialog {
                 cursor: pointer;
