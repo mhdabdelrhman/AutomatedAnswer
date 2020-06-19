@@ -1,7 +1,8 @@
 <template>
     <div class="conversation-container">
         <div class="search">
-            <input type="text" v-model="searchText" placeholder="Search..." @keypress.enter="handelSearchEnter">
+            <input v-if="searchResults.length==0" class="input-search" type="text" v-model="searchText" placeholder="Search..." @keypress.enter="handelSearchEnter">
+            <v-select v-else :items="searchResults" label="Search results" @change="handelSearchResult"></v-select>
         </div>
         <chain-node v-model="chain"></chain-node>
         <div v-if="showButtons">
@@ -49,11 +50,34 @@
                     return;
                 }
                 new SearchService(this.chain, this.searchText, (res) => {
-                    this.searchResults = res.results;
-                    if (this.searchResults && this.searchResults.length > 0) {
-                        ApplySearchResult(this.chain, this.searchResults[0]);
+                    if (res.results.length > 0) {
+                        res.results.forEach(r => {
+                            let txt = "Top node";
+                            r.forEach(p => {
+                                txt = txt.concat(" => " + p.text);
+                            });
+                            this.searchResults.push({
+                                text: txt,
+                                value: r
+                            });
+                        });
+                        this.searchResults.push({
+                            text: "Clear results",
+                            value: null
+                        });
+                    } else {
+                        alert(`Sorry, we couldn't find any results matching "${this.searchText}".`);
                     }
+                    this.searchText = "";
                 });
+            },
+            handelSearchResult(res) {
+                if (res != null){
+                    ApplySearchResult(this.chain, res);
+                }
+                else{
+                    this.searchResults = [];
+                }
             },
             handelSave() {
                 this.saveTreeToLocalStorage(this.chain);
@@ -100,13 +124,14 @@
     }
     .conversation-container {
         .search {
-            text-align: end;
-            input {
+            margin: 0.5rem;
+            height: 50px;
+            .input-search {
                 height: 2rem;
-                border: 1px solid gray;
-                padding: 0 0.5rem;
-                border-radius: 6px;
-                margin-bottom: 10px;
+                margin-top: 0.5rem;
+                width: 100%;
+                border: 0px;
+                border-bottom: 1px solid gray;
             }
         }
     }
