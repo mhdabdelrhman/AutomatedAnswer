@@ -3,7 +3,7 @@
         <chain-node v-model="chain"></chain-node>
         <div v-if="showButtons">
             <span @click="handelDiscard">Discard </span>
-            <span @click="handelSave"> Save</span>
+            <span @click="checkEmptyOption(chain)"> Save</span>
         </div>
     </div>
 </template>
@@ -62,7 +62,25 @@
                         this.saveTreeToLocalStorage(this.chain);
                     }
                 }, 2000);
-            }
+            },
+            checkEmptyOption(data) {
+                for (let i = 0; i < data.replies.length; i++) {
+                    if (data.replies[i].text == "") {
+                    this.showit = true;
+                    setTimeout(() => {
+                        this.showit = false;
+                    }, 5000);
+                    return false;
+                    } else if (data.replies[i].next.replies.length > 0) {
+                    if (!this.checkEmptyOption(data.replies[i].next)) {
+                        console.log("rim");
+                        return false;
+                    }
+                    }
+                }
+                this.handelSave()
+                return true;
+                }
         },
         created() {
             this.lastChain = this.loadTreeFromLocalStorage();
