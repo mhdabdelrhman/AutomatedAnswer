@@ -4,10 +4,10 @@
             <input v-if="searchResults.length==0" class="input-search" type="text" v-model="searchText" placeholder="Search..." @keypress.enter="handelSearchEnter">
             <v-select v-else :items="searchResults" label="Search results" @change="handelSearchResult"></v-select>
         </div>
-        <chain-node v-model="chain"></chain-node>
-        <div v-if="showButtons">
-            <span @click="handelDiscard">Discard </span>
-            <span @click="handelSave"> Save</span>
+        <chain-node class="chain-node" v-model="chain"></chain-node>
+        <div class="buttons" v-if="showButtons">
+            <v-btn :rounded="true" @click="handelDiscard">Discard </v-btn>
+            <v-btn class="ml-3" :rounded="true" :color="`success`" @click="handelSave"> Save</v-btn>
         </div>
     </div>
 </template>
@@ -84,7 +84,7 @@
                 }
             },
             handelSave() {
-                new ValidateService(this.chain, async (res) => {
+                new ValidateService(this.chain, async(res) => {
                     if (res.invalidPath == null) {
                         saveToLocalStorage(this.chain, this.storageName);
                         saveToLocalStorage(this.chain, this.baseStorageName);
@@ -107,7 +107,7 @@
                         saveToLocalStorage(this.chain, this.storageName);
                     }
                 }, 2000);
-            },            
+            },
         },
         created() {
             this.baseChain = loadFromLocalStorage(this.baseStorageName) || tree;
@@ -117,24 +117,47 @@
     }
 </script>
 <style lang="scss">
-    .option-node {
-        display: inline-block;
-        margin: 0.5rem;
-        padding: 0.5rem 0.9rem;
-        border-radius: 25px;
-        position: relative;
-    }
-    .conversation-container {
-        .search {
+        .option-node {
+            display: inline-block;
             margin: 0.5rem;
-            height: 50px;
-            .input-search {
-                height: 2rem;
-                margin-top: 0.5rem;
-                width: 100%;
-                border: 0px;
-                border-bottom: 1px solid gray;
+            padding: 0.5rem 0.9rem;
+            border-radius: 25px;
+            position: relative;
+        }
+        .conversation-container {
+            position: relative;
+            .search {
+                z-index: 1;
+                background-color: white;
+                height: 50px;
+                position: fixed;
+                left: 0px;
+                right: 0px;
+                top: 0px;
+                padding: 0 0.4rem;
+                .input-search {
+                    height: 2rem;
+                    margin-top: 0.5rem;
+                    width: 100%;
+                    border: 0px;
+                    border-bottom: 1px solid gray;
+                }
+            }
+            .chain-node {
+                margin-top: 50px;
+                overflow-y: auto;
+                margin-bottom: 70px;
+            }
+            .buttons {
+                z-index: 1;
+                background-color: white;
+                border-top: 1px solid gray;
+                padding: 1rem;
+                text-align: center;
+                position: fixed;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
             }
         }
-    }
 </style>
