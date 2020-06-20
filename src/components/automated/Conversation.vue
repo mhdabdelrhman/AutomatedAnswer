@@ -84,7 +84,6 @@
                 }
             },
             handelSave() {
-                console.log("1");
                 new ValidateService(this.chain, async (res) => {
                     if (res.invalidPath == null) {
                         saveToLocalStorage(this.chain, this.storageName);
