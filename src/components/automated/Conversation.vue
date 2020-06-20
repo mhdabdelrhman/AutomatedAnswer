@@ -17,12 +17,14 @@
         tree,
         Chain,
         SearchService,
-        ApplySearchResult
+        ValidateService,
+        ApplySelection
     } from './models'
     import {
         deepClone,
         saveToLocalStorage,
-        loadFromLocalStorage
+        loadFromLocalStorage,
+        sleep
     } from './utils'
     import ChainNode from './ChainNode'
     export default {
@@ -75,17 +77,24 @@
                 });
             },
             handelSearchResult(res) {
-                if (res != null){
-                    ApplySearchResult(this.chain, res);
-                }
-                else{
+                if (res != null) {
+                    ApplySelection(this.chain, res);
+                } else {
                     this.searchResults = [];
                 }
             },
             handelSave() {
-                saveToLocalStorage(this.chain, this.storageName);
-                saveToLocalStorage(this.chain, this.baseStorageName);
-                this.baseChain = deepClone(this.chain);
+                new ValidateService(this.chain, async (res) => {
+                    if (res.invalidPath == null) {
+                        saveToLocalStorage(this.chain, this.storageName);
+                        saveToLocalStorage(this.chain, this.baseStorageName);
+                        this.baseChain = deepClone(this.chain);
+                    } else {
+                        ApplySelection(this.chain, res.invalidPath);
+                        await sleep(200);
+                        alert("Error, Please fill in all the reply fields.");
+                    }
+                });
             },
             handelDiscard() {
                 this.chain = deepClone(this.baseChain);
@@ -98,11 +107,11 @@
                         saveToLocalStorage(this.chain, this.storageName);
                     }
                 }, 2000);
-            }
+            },            
         },
         created() {
-            this.baseChain = loadFromLocalStorage(this.baseStorageName)||tree;
-            this.chain = loadFromLocalStorage(this.storageName)||tree;
+            this.baseChain = loadFromLocalStorage(this.baseStorageName) || tree;
+            this.chain = loadFromLocalStorage(this.storageName) || tree;
             this.timer();
         },
     }
