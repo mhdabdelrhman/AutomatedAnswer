@@ -1,4 +1,4 @@
-import { generateId } from './utils'
+import { generateId } from './utils';
 
 export class Chain {
 	constructor() {
@@ -7,7 +7,7 @@ export class Chain {
 		this.replies = [];
 		this.dialogs = [];
 	}
-}
+};
 
 export class Reply {
 	constructor() {
@@ -16,7 +16,7 @@ export class Reply {
 		this.next = new Chain();
 		this.selected = null;
 	}
-}
+};
 
 export class Dialog {
 	constructor() {
@@ -24,7 +24,7 @@ export class Dialog {
 		this.text = "";
 		this.type = "";
 	}
-}
+};
 
 export var tree = new Chain();
 
@@ -37,17 +37,17 @@ function unselectChainReplies(chain) {
 		reply.selected = false;
 		unselectChainReplies(reply.next);
 	}
-}
+};
 
-export var ApplySearchResult = function (chain, result) {
+export var ApplySelection = function (chain, selection) {
 	// unselect all reply nodes
 	unselectChainReplies(chain);
 	// select replies
-	for (let i = 0; i < result.length; i++) {
-		let reply = result[i];
+	for (let i = 0; i < selection.length; i++) {
+		let reply = selection[i];
 		reply.selected = true;
 	}
-}
+};
 
 export class SearchService {
 	constructor(chain, searchText, callback = null) {
@@ -111,4 +111,63 @@ export class SearchService {
 	isTextMatchSearch(text) {
 		return text && text.toLowerCase().includes(this.searchText);
 	};
-}
+};
+
+export class ValidateService {
+	constructor(chain, callback = null) {
+		this.chain = chain;
+		this.invalidPath = null;
+		this.validate(callback);
+	};
+
+	async validate(callback = null) {
+		this.invalidPath = null;
+		if (!this.chain)
+			return;
+		if (!this.isChainValid(this.chain)) {
+			this.invalidPath = [];
+			if (callback)
+				callback(this);
+			return;
+		}
+
+		for (let i = 0; i < this.chain.replies.length; i++) {
+			this.validateRecursive([this.chain.replies[i]]);
+		}
+
+		if (callback)
+			callback(this);
+	};
+
+	validateRecursive(arry) {
+		let reply = arry[arry.length - 1];
+		if (!this.isReplyValid(reply)) {
+			this.invalidPath = arry;
+			return;
+		}
+
+		for (let i = 0; i < reply.next.replies.length; i++) {
+			var a = [...arry];
+			a.push(reply.next.replies[i]);
+			this.validateRecursive(a);
+		}
+	};
+
+	isReplyValid(reply) {
+		if (!reply.text
+			|| reply.text.length == 0)
+			return false;
+
+		if (reply.next
+			&& reply.next.replies
+			&& reply.next.replies.length > 0
+			&& !this.isChainValid(reply.next))
+			return false;
+
+		return true;
+	};
+
+	isChainValid(chain) {
+		return chain.text && chain.text.length > 0;
+	};
+};

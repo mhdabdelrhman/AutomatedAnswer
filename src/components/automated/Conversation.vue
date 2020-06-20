@@ -7,7 +7,7 @@
         <chain-node v-model="chain"></chain-node>
         <div v-if="showButtons">
             <span @click="handelDiscard">Discard </span>
-            <span @click="checkEmptyOption(chain)"> Save</span>
+            <span @click="handelSave"> Save</span>
         </div>
     </div>
 </template>
@@ -17,12 +17,14 @@
         tree,
         Chain,
         SearchService,
-        ApplySearchResult
+        ValidateService,
+        ApplySelection
     } from './models'
     import {
         deepClone,
         saveToLocalStorage,
-        loadFromLocalStorage
+        loadFromLocalStorage,
+        sleep
     } from './utils'
     import ChainNode from './ChainNode'
     export default {
@@ -75,17 +77,25 @@
                 });
             },
             handelSearchResult(res) {
-                if (res != null){
-                    ApplySearchResult(this.chain, res);
-                }
-                else{
+                if (res != null) {
+                    ApplySelection(this.chain, res);
+                } else {
                     this.searchResults = [];
                 }
             },
             handelSave() {
-                saveToLocalStorage(this.chain, this.storageName);
-                saveToLocalStorage(this.chain, this.baseStorageName);
-                this.baseChain = deepClone(this.chain);
+                console.log("1");
+                new ValidateService(this.chain, async (res) => {
+                    if (res.invalidPath == null) {
+                        saveToLocalStorage(this.chain, this.storageName);
+                        saveToLocalStorage(this.chain, this.baseStorageName);
+                        this.baseChain = deepClone(this.chain);
+                    } else {
+                        ApplySelection(this.chain, res.invalidPath);
+                        await sleep(200);
+                        alert("Error, Please fill in all the reply fields.");
+                    }
+                });
             },
             handelDiscard() {
                 this.chain = deepClone(this.baseChain);
@@ -98,29 +108,11 @@
                         saveToLocalStorage(this.chain, this.storageName);
                     }
                 }, 2000);
-            },
-            checkEmptyOption(data) {
-                for (let i = 0; i < data.replies.length; i++) {
-                    if (data.replies[i].text == "") {
-                    this.showit = true;
-                    setTimeout(() => {
-                        this.showit = false;
-                    }, 5000);
-                    return false;
-                    } else if (data.replies[i].next.replies.length > 0) {
-                    if (!this.checkEmptyOption(data.replies[i].next)) {
-                        
-                        return false;
-                    }
-                    }
-                }
-                this.handelSave()
-                return true;
-                }
+            },            
         },
         created() {
-            this.baseChain = loadFromLocalStorage(this.baseStorageName)||tree;
-            this.chain = loadFromLocalStorage(this.storageName)||tree;
+            this.baseChain = loadFromLocalStorage(this.baseStorageName) || tree;
+            this.chain = loadFromLocalStorage(this.storageName) || tree;
             this.timer();
         },
     }

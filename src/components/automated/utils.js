@@ -21,3 +21,7 @@ export var loadFromLocalStorage = function (storage) {
     }
     return null;
 };
+
+export var sleep = function (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
