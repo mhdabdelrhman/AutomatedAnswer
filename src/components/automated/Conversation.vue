@@ -5,6 +5,7 @@
             <v-select v-else :items="searchResults" label="Search results" @change="handelSearchResult"></v-select>
         </div>
         <chain-node class="chain-node" v-model="chain"></chain-node>
+        <dialog-modal/>
         <div class="buttons" v-if="showButtons">
             <v-btn :rounded="true" @click="handelDiscard">Discard </v-btn>
             <v-btn class="ml-3" :rounded="true" :color="`success`" @click="handelSave"> Save</v-btn>
@@ -27,10 +28,12 @@
         sleep
     } from './utils'
     import ChainNode from './ChainNode'
+    import DialogModal from './DialogModal'
     export default {
         name: 'conversation',
         components: {
             'chain-node': ChainNode,
+            'dialog-modal':DialogModal,
         },
         data() {
             return {
