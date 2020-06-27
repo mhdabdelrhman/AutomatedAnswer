@@ -104,29 +104,10 @@ export default {
       return null;
     },
     inputMessage() {
-      if (this.fileInput || this.textInput) {
-        if (
-          this.fileInput &&
-          this.fileInput.required &&
-          this.textInput &&
-          this.textInput.required
-        )
-          return "Please pick a file and set the url";
-
-        if (
-          this.fileInput &&
-          !this.fileInput.required &&
-          this.textInput &&
-          !this.textInput.required
-        )
-          return "Please pick a file or set the url";
-
-        if (this.fileInput && this.fileInput.required)
-          return "Please pick a file";
-
-        if (this.textInput && this.textInput.required)
-          return "Please set the url";
-      }
+      if (this.fileInput && this.textInput)
+        return "Please pick a file or set the url";
+      if (this.fileInput) return "Please pick a file";
+      if (this.textInput) return "Please set the url";
       return null;
     }
   },
