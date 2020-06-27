@@ -39,12 +39,12 @@ export const postDataToServer = function(dialogData) {
   // post to the server
   // response must be an object like
   /* 
-      data={
+      {
         success:true,// true or false
         error:"",// error message if exists
         url:"", // url to the file or the url set by user
       }
-      */
+  */
   let formData = new FormData();
   formData.append("dialogId", dialogData.dialogId);
   formData.append("option", JSON.stringify(dialogData.option));
@@ -59,15 +59,13 @@ export const postDataToServer = function(dialogData) {
       dialogData.inputs.file.name
     );
   }
-  
+
   return axios
     .post(checkApiUrl, formData)
     .then((response) => {
-      console.log(response);
       return response.data;
     })
     .catch((er) => {
-      console.log(er);
       return { success: false, error: er, url: null };
     });
 };
