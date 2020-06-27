@@ -4,7 +4,7 @@
       <v-card class="pa-4">
         <v-menu>
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" v-on="on" class="mt-2">{{title}}</v-btn>
+            <v-btn :disabled="processing" color="primary" v-on="on" class="mt-2">{{title}}</v-btn>
           </template>
           <v-list>
             <v-list-item
@@ -15,14 +15,24 @@
             >{{option.text}}</v-list-item>
           </v-list>
         </v-menu>
+        <v-card-actions v-if="errorMessage">
+          <v-alert width="100%" type="error">{{errorMessage}}</v-alert>
+        </v-card-actions>
         <v-card-actions v-if="isOptionSelected">
-          <v-text-field v-model="message" prepend-icon="mdi-android-messages" label="Message"></v-text-field>
+          <v-text-field
+            :disabled="processing"
+            v-model="inputs.message"
+            prepend-icon="mdi-android-messages"
+            label="Message"
+          ></v-text-field>
         </v-card-actions>
         <v-card-actions v-if="inputMessage">
           <span>{{inputMessage}}</span>
         </v-card-actions>
         <v-card-actions v-if="fileInput">
           <v-file-input
+            :disabled="processing"
+            v-model="inputs.file"
             :rules="rules"
             :accept="fileInput.accept"
             :placeholder="fileInput.placeholder"
@@ -32,6 +42,8 @@
         </v-card-actions>
         <v-card-actions v-if="textInput">
           <v-text-field
+            :disabled="processing"
+            v-model="inputs.url"
             :placeholder="textInput.placeholder"
             :prepend-icon="textInput.icon"
             :label="selectedOption.text"
@@ -40,12 +52,22 @@
         <v-card-actions class="mt-3 flex-row-reverse">
           <v-btn
             v-if="isOptionSelected"
+            :disabled="processing"
             class="ml-3"
-            :rounded="true"
+            rounded
             :color="`success`"
             @click="handelSave"
           >Save</v-btn>
-          <v-btn :rounded="true" @click="handelClose">Cancel</v-btn>
+          <v-btn rounded :disabled="processing" @click="handelClose">Cancel</v-btn>
+          <v-progress-circular
+            v-if="processing"
+            class="mr-3"
+            indeterminate
+            rotate="0"
+            size="32"
+            width="4"
+            color="light-blue"
+          ></v-progress-circular>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -54,8 +76,13 @@
 
 <script>
 import options from "./config";
+import { postDataToServer } from "./utils";
 export default {
   props: {
+    dialogId: {
+      type: String,
+      default: null
+    },
     option: {
       type: Object,
       default: null
@@ -67,16 +94,22 @@ export default {
   },
   data() {
     return {
+      dialog: true,
       options: options,
       selectedOption: this.option,
-      message: "",
-      dialog: true,
       rules: [
         value =>
           !value ||
           value.size < 2000000 ||
           "file size should be less than 2 MB!"
-      ]
+      ],
+      inputs: {
+        message: this.values && this.values.message,
+        file: null,
+        url: this.values && this.values.url
+      },
+      errorMessage: null,
+      processing: false
     };
   },
   computed: {
@@ -113,6 +146,8 @@ export default {
   },
   methods: {
     handelSelectOption(option, index) {
+      this.errorMessage = null;
+      this.inputs.message = this.inputs.file = this.inputs.url = null;
       this.selectedOption = option;
     },
     handelClose() {
@@ -120,26 +155,71 @@ export default {
       this.$emit("hide");
     },
     handelSave() {
+      this.errorMessage = null;
+      this.processing = true;
       if (this.isValidLocaly()) {
-        this.postToServer(data => {
+        this.checkInServer(data => {
+          this.processing = false;
           if (data.success) {
             this.dialog = false;
+            if (data.url) this.inputs.url = data.url;
             this.$emit("save", {
               option: this.selectedOption,
-              values: { message: this.message }
+              values: { message: this.inputs.message, url: this.inputs.url }
             });
           } else {
-            this.showServerErrorMessage(data.error);
+            if (data.error) this.errorMessage = data.error;
+            else this.errorMessage = "Error! please check input data.";
           }
         });
+      } else {
+        this.processing = false;
       }
     },
     isValidLocaly() {
+      if (
+        !this.fileInput &&
+        !this.textInput &&
+        (!this.inputs.message || this.inputs.message === "")
+      ) {
+        this.errorMessage = "Error! please enter valid message.";
+        return false;
+      }
+
+      if (
+        this.fileInput &&
+        this.textInput &&
+        ((this.inputs.file && this.inputs.url && this.inputs.url.length > 0) ||
+          (!this.inputs.file && (!this.inputs.url || this.inputs.url === "")))
+      ) {
+        this.errorMessage = "Error! please fill one input (file or URL).";
+        return false;
+      }
+
+      if (this.fileInput && !this.textInput && !this.inputs.file) {
+        this.errorMessage = "Error! please pick a fill.";
+        return false;
+      }
+
+      if (
+        !this.fileInput &&
+        this.textInput &&
+        (!this.inputs.url || this.inputs.url === "")
+      ) {
+        this.errorMessage = "Error! please set the URL.";
+        return false;
+      }
+
       return true;
     },
-    postToServer(callback) {
-      // post here to server
-      callback({ success: true, error: "" });
+    checkInServer(callback) {      
+      postDataToServer({
+        dialogId: this.dialogId,
+        option: this.selectedOption,
+        inputs: this.inputs
+      }).then(serverData => {
+        callback(serverData);
+      });
     }
   }
 };

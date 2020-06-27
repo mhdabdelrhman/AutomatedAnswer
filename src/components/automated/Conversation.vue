@@ -19,6 +19,7 @@
     ></chain-node>
     <dialog-modal
       v-if="modal.show"
+      :dialogId="dialog.isEdit ? dialog.data.dialog.id : null"
       :option="modal.option"
       :values="modal.values"
       @hide="handelHideModal"
@@ -38,7 +39,7 @@ import {
   Dialog,
   SearchService,
   ValidateService,
-  ApplySelection
+  applySelection
 } from "./models";
 import {
   deepClone,
@@ -122,7 +123,7 @@ export default {
           res.results.forEach(r => {
             let txt = res.chain.text;
             r.forEach(p => {
-              txt = txt.concat(", " + p.text);
+              txt = p.text;
             });
             this.searchResults.push({
               text: txt,
@@ -143,7 +144,7 @@ export default {
     },
     handelSearchResult(res) {
       if (res != null) {
-        ApplySelection(this.chain, res);
+        applySelection(this.chain, res);
       } else {
         this.searchResults = [];
       }
@@ -155,7 +156,7 @@ export default {
           saveToLocalStorage(this.chain, this.baseStorageName);
           this.baseChain = deepClone(this.chain);
         } else {
-          ApplySelection(this.chain, res.invalidPath);
+          applySelection(this.chain, res.invalidPath);
           await sleep(200);
           alert("Error, Please fill in all the reply fields.");
         }

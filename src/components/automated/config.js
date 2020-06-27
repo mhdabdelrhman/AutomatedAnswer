@@ -8,7 +8,7 @@ export default [
         placeholder: "Pick an avatar",
         input_type: "file",
         data_type: "photo",
-        accept: "image/png, image/jpeg, image/bmp",
+        accept: "image/*",
       },
       {
         icon: "mdi-web",
@@ -27,7 +27,7 @@ export default [
         placeholder: "Pick a voice",
         input_type: "file",
         data_type: "audio",
-        accept: "MP3/mp3, M4A/m4a",
+        accept: "audio/*",
       },
       {
         icon: "mdi-web",
@@ -47,7 +47,7 @@ export default [
         placeholder: "Pick a video",
         input_type: "file",
         data_type: "video",
-        accept: "video/mp4, video/mkv",
+        accept: "video/*",
         required: false,
       },
       {
@@ -68,7 +68,7 @@ export default [
         placeholder: "Pick a document",
         input_type: "file",
         data_type: "document",
-        accept: "PSD/psd, PDF/pdf",
+        accept: ".pdf, .doc, .docx",
       },
       {
         icon: "mdi-web",

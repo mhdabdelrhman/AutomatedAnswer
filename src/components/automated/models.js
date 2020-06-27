@@ -38,7 +38,7 @@ function unselectChainReplies(chain) {
   }
 }
 
-export var ApplySelection = function(chain, selection) {
+export const applySelection = function(chain, selection) {
   // unselect all reply nodes
   unselectChainReplies(chain);
   // select replies
@@ -107,7 +107,7 @@ export class SearchService {
   }
 
   isTextMatchSearch(text) {
-    return text && text.toLowerCase().includes(this.searchText);
+    return text && text.toLowerCase().includes(this.searchText.toLowerCase());
   }
 }
 
