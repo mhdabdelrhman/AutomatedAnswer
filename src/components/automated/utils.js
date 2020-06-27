@@ -59,7 +59,7 @@ export const postDataToServer = function(dialogData) {
       dialogData.inputs.file.name
     );
   }
-  console.log("Dialog data = ", dialogData);
+  
   return axios
     .post(checkApiUrl, formData)
     .then((response) => {
