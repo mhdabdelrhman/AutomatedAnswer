@@ -29,6 +29,31 @@ export class Dialog {
 
 export var tree = new Chain();
 
+function findUrls(chain) {
+  let urls = [];
+  if (chain) {
+    chain.dialogs.forEach((dialog) => {
+      if (dialog.values && dialog.values.url && dialog.values.url.length > 0)
+        urls.push(dialog.values.url);
+    });
+
+    chain.replies.forEach((reply) => {
+      let nextUrls = findUrls(reply.next);
+      if (nextUrls.length > 0) urls.push(nextUrls);
+    });
+  }
+  return urls;
+}
+
+export const findDeletedUrls = function(oldChain, newChain) {
+  let oldUrls = findUrls(oldChain);
+  let newUrls = findUrls(newChain);
+  if (oldUrls.length > 0) {
+    return oldUrls.filter((url) => newUrls.indexOf(url) < 0);
+  }
+  return [];
+};
+
 function unselectChainReplies(chain) {
   if (!chain) return;
   for (let i = 0; i < chain.replies.length; i++) {
