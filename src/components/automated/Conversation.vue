@@ -1,15 +1,46 @@
 <template>
   <div class="conversation-container">
     <div class="search">
-      <input
-        v-if="searchResults.length==0"
-        class="input-search"
-        type="text"
-        v-model="searchText"
-        placeholder="Search..."
-        @keypress.enter="handelSearchEnter"
-      />
-      <v-select v-else :items="searchResults" label="Search results" @change="handelSearchResult"></v-select>
+      <v-menu v-model="searchMenu" :close-on-content-click="false" :max-height="500" offset-y>
+        <template v-slot:activator="{ on }">
+          <input
+            class="input-search"
+            type="text"
+            v-model="searchText"
+            placeholder="Search..."
+            @keypress.enter="handelSearchEnter"
+            v-on="on"
+          />
+        </template>
+        <v-card v-if="searchResults && searchResults.length>0">
+          <v-list>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>Search Results</v-list-item-title>
+                <v-list-item-subtitle class="mt-2">
+                  Results for '
+                  <span>{{lastSearchText}}</span>'
+                </v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-btn icon color="red" @click="()=>{searchResults = [];searchMenu=false}">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <v-list>
+            <v-list-item
+              v-for="(result,index) in searchResults"
+              :key="index"
+              @click="handelSearchResult(result.value)"
+            >
+              <v-list-item-action>{{result.text}}</v-list-item-action>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-menu>
     </div>
     <chain-node
       class="chain-node"
@@ -68,7 +99,9 @@ export default {
       baseStorageName: "_base_chain_",
       storageName: "_chain_",
       searchText: "",
+      lastSearchText: "",
       searchResults: [],
+      searchMenu: false,
       dialog: {
         isEdit: false,
         data: null
@@ -114,40 +147,35 @@ export default {
       this.modal.show = true;
     },
     handelSearchEnter() {
-      if (!this.searchText || this.searchText.length == 0) {
-        this.searchResults = [];
-        return;
-      }
+      this.searchResults = [];
+      this.searchMenu = false;
+      if (!this.searchText || this.searchText.length == 0) return;
+
       new SearchService(this.chain, this.searchText, res => {
         if (res.results.length > 0) {
           res.results.forEach(r => {
             let txt = res.chain.text;
             r.forEach(p => {
-              txt = p.text;
+              txt = txt.concat(", " + p.text);
             });
             this.searchResults.push({
               text: txt,
               value: r
             });
           });
-          this.searchResults.push({
-            text: "Clear results",
-            value: null
-          });
+          this.searchMenu = true;
         } else {
           alert(
             `Sorry, we couldn't find any results matching "${this.searchText}".`
           );
         }
+        this.lastSearchText = this.searchText;
         this.searchText = "";
       });
     },
     handelSearchResult(res) {
-      if (res != null) {
+      if (res != null) 
         applySelection(this.chain, res);
-      } else {
-        this.searchResults = [];
-      }
     },
     handelSave() {
       new ValidateService(this.chain, async res => {
