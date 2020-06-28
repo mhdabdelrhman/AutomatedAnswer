@@ -1,6 +1,7 @@
 import axios from "axios";
 const baseUrl = "https://server-url.com/api/";
 const checkApiUrl = baseUrl + "check/";
+const saveApiUrl = baseUrl+"save/";
 
 export const generateId = function() {
   // Math.random should be unique because of its seeding algorithm.
@@ -67,5 +68,28 @@ export const postDataToServer = function(dialogData) {
     })
     .catch((er) => {
       return { success: false, error: er, url: null };
+    });
+};
+
+
+export const postSavedDataToServer = function(chain,deletedUrls) {
+  // post to the server
+  // response must be an object like
+  /* 
+      {
+        success:true,// true or false
+        error:"",// error message if exists
+      }
+  */
+  let formData = new FormData();
+  formData.append("chain", JSON.stringify(chain));
+  formData.append("deletedUrls", JSON.stringify(deletedUrls));
+  return axios
+    .post(saveApiUrl, formData)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((er) => {
+      return { success: false, error: er};
     });
 };

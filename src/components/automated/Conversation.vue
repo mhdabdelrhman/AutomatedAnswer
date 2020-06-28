@@ -57,8 +57,26 @@
       @save="handelSaveModal"
     />
     <div class="buttons" v-if="showButtons">
-      <v-btn :rounded="true" @click="handelDiscard">Discard</v-btn>
-      <v-btn class="ml-3" :rounded="true" :color="`success`" @click="handelSave">Save</v-btn>
+      <v-card-actions v-if="errorMessage">
+        <v-alert width="100%" type="error">{{errorMessage}}</v-alert>
+      </v-card-actions>
+      <v-progress-circular
+        v-if="processing"
+        class="mr-3"
+        indeterminate
+        rotate="0"
+        size="32"
+        width="4"
+        color="light-blue"
+      ></v-progress-circular>
+      <v-btn :disabled="processing" :rounded="true" @click="handelDiscard">Discard</v-btn>
+      <v-btn
+        :disabled="processing"
+        class="ml-3"
+        :rounded="true"
+        :color="`success`"
+        @click="handelSave"
+      >Save</v-btn>
     </div>
   </div>
 </template>
@@ -70,13 +88,15 @@ import {
   Dialog,
   SearchService,
   ValidateService,
-  applySelection
+  applySelection,
+  findDeletedUrls
 } from "./models";
 import {
   deepClone,
   saveToLocalStorage,
   loadFromLocalStorage,
-  sleep
+  sleep,
+  postSavedDataToServer
 } from "./utils";
 import ChainNode from "./ChainNode";
 import DialogModal from "./DialogModal";
@@ -105,7 +125,9 @@ export default {
       dialog: {
         isEdit: false,
         data: null
-      }
+      },
+      errorMessage: null,
+      processing: false
     };
   },
   computed: {
@@ -179,9 +201,19 @@ export default {
     handelSave() {
       new ValidateService(this.chain, async res => {
         if (res.invalidPath == null) {
-          saveToLocalStorage(this.chain, this.storageName);
-          saveToLocalStorage(this.chain, this.baseStorageName);
-          this.baseChain = deepClone(this.chain);
+          this.processing = true;
+          this.errorMessage = null;
+          const deletedUrls = findDeletedUrls(this.baseChain, this.chain);
+          postSavedDataToServer(this.chain, deletedUrls).then(res => {
+            this.processing = false;
+            if (res.success) {
+              saveToLocalStorage(this.chain, this.storageName);
+              saveToLocalStorage(this.chain, this.baseStorageName);
+              this.baseChain = deepClone(this.chain);
+            } else {
+              this.errorMessage = res.error;
+            }
+          });
         } else {
           applySelection(this.chain, res.invalidPath);
           await sleep(200);
@@ -190,6 +222,7 @@ export default {
       });
     },
     handelDiscard() {
+      this.errorMessage=null;
       this.chain = deepClone(this.baseChain);
       saveToLocalStorage(this.chain, this.storageName);
     },
