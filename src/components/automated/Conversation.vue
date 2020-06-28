@@ -156,7 +156,7 @@ export default {
           res.results.forEach(r => {
             let txt = res.chain.text;
             r.forEach(p => {
-              txt = txt.concat(", " + p.text);
+              txt = p.text;
             });
             this.searchResults.push({
               text: txt,
@@ -174,8 +174,7 @@ export default {
       });
     },
     handelSearchResult(res) {
-      if (res != null) 
-        applySelection(this.chain, res);
+      if (res != null) applySelection(this.chain, res);
     },
     handelSave() {
       new ValidateService(this.chain, async res => {
