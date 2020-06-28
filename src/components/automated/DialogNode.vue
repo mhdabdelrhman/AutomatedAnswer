@@ -1,7 +1,7 @@
 <template>
     <div class="dialog-container option-node" @mouseover="hover = true" @mouseleave="hover = false">
+        <v-icon class="mr-3" medium color="#f6ff00" @click="handelEdit">mdi-pen</v-icon>
         <label :id="id" >{{value}}</label>
-        <i @click="handelEdit">Edit</i>
         <transition name="fade">
             <div v-show="hover">
                 <span @click="handelDelete">X</span>
