@@ -1,4 +1,4 @@
-import { generateId } from "./utils";
+import { generateId, mergeArrays } from "./utils";
 
 export class Chain {
   constructor() {
@@ -39,7 +39,7 @@ function findUrls(chain) {
 
     chain.replies.forEach((reply) => {
       let nextUrls = findUrls(reply.next);
-      if (nextUrls.length > 0) urls.push(nextUrls);
+      if (nextUrls.length > 0) urls = mergeArrays(urls, nextUrls);
     });
   }
   return urls;
