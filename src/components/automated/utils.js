@@ -16,9 +16,9 @@ export const deepClone = function(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 
-export const saveToLocalStorage = function(chainObject, storage) {
-  if (chainObject) {
-    localStorage.setItem(storage, JSON.stringify(chainObject));
+export const saveToLocalStorage = function(obj, storage) {
+  if (obj) {
+    localStorage.setItem(storage, JSON.stringify(obj));
   }
 };
 
@@ -34,6 +34,22 @@ export const loadFromLocalStorage = function(storage) {
 
 export const sleep = function(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const mergeArrays = function(...arrays) {
+  let jointArray = [];
+
+  arrays.forEach((array) => {
+    jointArray = [...jointArray, ...array];
+  });
+  const uniqueArray = jointArray.reduce((newArray, item) => {
+    if (newArray.includes(item)) {
+      return newArray;
+    } else {
+      return [...newArray, item];
+    }
+  }, []);
+  return uniqueArray;
 };
 
 export const postDataToServer = function(dialogData) {
@@ -80,7 +96,7 @@ export const postSavedDataToServer = function(chain, deletedUrls) {
         error:"",// error message if exists
       }
   */
-  const payload = { chain: chain, deletedUrls: deletedUrls };
+  const payload = JSON.stringify({ chain: chain, deletedUrls: deletedUrls });
   return axios
     .post(saveApiUrl, payload)
     .then((response) => {

@@ -58,7 +58,7 @@
     />
     <div class="buttons" v-if="showButtons">
       <v-card-actions v-if="errorMessage">
-        <v-alert width="100%" type="error">{{errorMessage}}</v-alert>
+        <v-alert width="100%" dismissible type="error">{{errorMessage}}</v-alert>
       </v-card-actions>
       <v-progress-circular
         v-if="processing"
@@ -96,6 +96,7 @@ import {
   saveToLocalStorage,
   loadFromLocalStorage,
   sleep,
+  mergeArrays,
   postSavedDataToServer
 } from "./utils";
 import ChainNode from "./ChainNode";
@@ -115,9 +116,11 @@ export default {
       },
       chain: tree,
       baseChain: tree,
-      timerWrittenChain: "",
+      deletedUrls: [],
+      timerWrittenChain: tree,
       baseStorageName: "_base_chain_",
       storageName: "_chain_",
+      deletedStorageName: "_deleted_urls_",
       searchText: "",
       lastSearchText: "",
       searchResults: [],
@@ -198,18 +201,22 @@ export default {
     handelSearchResult(res) {
       if (res != null) applySelection(this.chain, res);
     },
-    handelSave() {
+    handelSave() {      
       new ValidateService(this.chain, async res => {
         if (res.invalidPath == null) {
           this.processing = true;
           this.errorMessage = null;
-          const deletedUrls = findDeletedUrls(this.baseChain, this.chain);
-          postSavedDataToServer(this.chain, deletedUrls).then(res => {
+          let newDeletedUrls = findDeletedUrls(this.baseChain, this.chain);
+          this.deletedUrls = mergeArrays(this.deletedUrls, newDeletedUrls);
+          postSavedDataToServer(this.chain, this.deletedUrls).then(res => {
             this.processing = false;
             if (res.success) {
-              saveToLocalStorage(this.chain, this.storageName);
-              saveToLocalStorage(this.chain, this.baseStorageName);
+              this.deletedUrls = [];
               this.baseChain = deepClone(this.chain);
+              this.timerWrittenChain = deepClone(this.chain);
+              saveToLocalStorage(this.chain, this.storageName);
+              saveToLocalStorage(this.baseChain, this.baseStorageName);
+              saveToLocalStorage(this.deletedUrls, this.deletedStorageName);
             } else {
               this.errorMessage = res.error;
             }
@@ -222,15 +229,23 @@ export default {
       });
     },
     handelDiscard() {
-      this.errorMessage=null;
+      this.errorMessage = null;
       this.chain = deepClone(this.baseChain);
       saveToLocalStorage(this.chain, this.storageName);
     },
     timer() {
       setInterval(() => {
-        if (this.timerWrittenChain != JSON.stringify(this.chain)) {
-          this.timerWrittenChain = JSON.stringify(this.chain);
+        if (
+          JSON.stringify(this.timerWrittenChain) != JSON.stringify(this.chain)
+        ) {
+          let newDeletedUrls = findDeletedUrls(
+            this.timerWrittenChain,
+            this.chain
+          );
+          this.deletedUrls = mergeArrays(this.deletedUrls, newDeletedUrls);
+          this.timerWrittenChain = deepClone(this.chain);
           saveToLocalStorage(this.chain, this.storageName);
+          saveToLocalStorage(this.deletedUrls, this.deletedStorageName);
         }
       }, 2000);
     }
@@ -238,6 +253,8 @@ export default {
   created() {
     this.baseChain = loadFromLocalStorage(this.baseStorageName) || tree;
     this.chain = loadFromLocalStorage(this.storageName) || tree;
+    this.deletedUrls = loadFromLocalStorage(this.deletedStorageName) || [];
+    this.timerWrittenChain = deepClone(this.chain);
     this.timer();
   }
 };
@@ -272,7 +289,7 @@ export default {
   .chain-node {
     margin-top: 50px;
     overflow-y: auto;
-    margin-bottom: 70px;
+    margin-bottom: 85px;
   }
   .buttons {
     z-index: 1;
