@@ -18,7 +18,7 @@
         <v-card-actions v-if="errorMessage">
           <v-alert width="100%" type="error">{{errorMessage}}</v-alert>
         </v-card-actions>
-        <v-card-actions v-if="isOptionSelected">
+        <v-card-actions v-if="isIncludeMessage">
           <v-text-field
             :disabled="processing"
             v-model="inputs.message"
@@ -113,6 +113,13 @@ export default {
     };
   },
   computed: {
+    isIncludeMessage() {
+      if (this.isOptionSelected) {
+        if (this.selectedOption.message == undefined) return true;
+        return this.selectedOption.message;
+      }
+      return false;
+    },
     isOptionSelected() {
       return this.selectedOption != null;
     },
@@ -212,7 +219,7 @@ export default {
 
       return true;
     },
-    checkInServer(callback) {      
+    checkInServer(callback) {
       postDataToServer({
         dialogId: this.dialogId,
         option: this.selectedOption,

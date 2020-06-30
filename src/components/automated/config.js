@@ -21,6 +21,7 @@ export default [
   {
     id: "send-audio",
     text: "Send audio",
+    message: false,
     inputs: [
       {
         icon: "mdi-phone-outline",
@@ -62,6 +63,7 @@ export default [
   {
     id: "send-document",
     text: "Send document",
+    message: false,
     inputs: [
       {
         icon: "mdi-file-document",
