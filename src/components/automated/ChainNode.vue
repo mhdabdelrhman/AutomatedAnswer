@@ -1,7 +1,7 @@
 <template>
   <div v-if="value" class="chain-container" :id="value.id">
     <div class="message-node">
-      <message-node v-model="value.text" @focused="handelMessageFocused" />
+      <message-node v-model="value.text" :enabled="enabled" @focused="handelMessageFocused" />
     </div>
     <div class="replies-dialogs-container">
       <reply-node
@@ -36,6 +36,7 @@
       <chain-node
         v-if="selectedReply && showNextReply"
         v-model="selectedReply.next"
+        :enabled="enableEditReplyMessage"
         @messageFocused="handelMessageFocused"
         @addDialog="handelAddDialog"
         @editDialog="handelEditDialog"
@@ -62,6 +63,10 @@ export default {
     value: {
       type: Object,
       default: tree
+    },
+    enabled: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -75,12 +80,14 @@ export default {
     },
     enableAddReply() {
       return (
+        this.enabled &&
         this.enableAddOption &&
         !(this.value.dialogs && this.value.dialogs.length > 0)
       );
     },
     enableAddDialog() {
       return (
+        this.enabled &&
         this.enableAddOption &&
         !(this.value.replies && this.value.replies.length > 0)
       );
@@ -91,6 +98,14 @@ export default {
         return selected;
       }
       return null;
+    },
+    enableEditReplyMessage() {
+      let enable =
+        this.selectedReply &&
+        this.selectedReply.text &&
+        this.selectedReply.text.length > 0;
+      if (enable) return true;
+      return false;
     }
   },
   methods: {
