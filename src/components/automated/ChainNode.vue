@@ -89,7 +89,8 @@ export default {
       return (
         this.enabled &&
         this.enableAddOption &&
-        !(this.value.replies && this.value.replies.length > 0)
+        !(this.value.replies && this.value.replies.length > 0) 
+        && this.value.level > 0
       );
     },
     selectedReply() {
@@ -146,6 +147,7 @@ export default {
     },
     handelAddReply() {
       let reply = new Reply();
+      reply.next.level = this.value.level + 1;
       this.value.replies.push(reply);
       this.selectReply(reply);
     },

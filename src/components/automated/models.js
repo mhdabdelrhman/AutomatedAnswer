@@ -6,6 +6,7 @@ export class Chain {
     this.text = "";
     this.replies = [];
     this.dialogs = [];
+    this.level = 0;
   }
 }
 
